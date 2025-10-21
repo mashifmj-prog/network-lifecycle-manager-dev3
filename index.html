@@ -660,6 +660,61 @@
             transform: translateX(5px);
         }
 
+        /* Business Case Styles */
+        .business-case-card {
+            background: linear-gradient(135deg, #f0f9ff, #e0f2fe);
+            border-left: 4px solid #0ea5e9;
+            border-radius: 12px;
+            padding: 20px;
+            margin: 15px 0;
+        }
+
+        .roi-metric {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            padding: 15px;
+            background: white;
+            border-radius: 8px;
+            margin: 10px 0;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+
+        .roi-value {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: #059669;
+        }
+
+        .financial-input-group {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+            margin: 15px 0;
+        }
+
+        .financial-input {
+            background: white;
+            padding: 15px;
+            border-radius: 8px;
+            border: 1px solid #e5e7eb;
+        }
+
+        .financial-input label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #374151;
+        }
+
+        .financial-input input {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #d1d5db;
+            border-radius: 6px;
+            font-size: 1rem;
+        }
+
         /* Premium Feature Cards */
         .premium-feature {
             border-left: 4px solid var(--ai-purple);
@@ -877,7 +932,7 @@
             background-color: var(--bg-card);
             border-radius: 1rem;
             width: 90%;
-            max-width: 600px;
+            max-width: 800px;
             padding: 2rem;
             box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
             max-height: 90vh;
@@ -974,6 +1029,75 @@
             transform: none;
         }
 
+        /* Business Case Modal Specific */
+        .business-case-modal .modal-content {
+            max-width: 1000px;
+        }
+
+        .case-tabs {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 2rem;
+            border-bottom: 2px solid var(--border-color);
+        }
+
+        .case-tab {
+            padding: 1rem 2rem;
+            background: none;
+            border: none;
+            color: var(--text-secondary);
+            font-weight: 600;
+            cursor: pointer;
+            border-bottom: 3px solid transparent;
+            transition: all 0.3s;
+        }
+
+        .case-tab.active {
+            color: var(--ai-purple);
+            border-bottom-color: var(--ai-purple);
+        }
+
+        .case-content {
+            display: none;
+        }
+
+        .case-content.active {
+            display: block;
+        }
+
+        .financial-summary {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .summary-card {
+            background: var(--bg-secondary);
+            padding: 1.5rem;
+            border-radius: 0.75rem;
+            text-align: center;
+        }
+
+        .summary-value {
+            font-size: 2rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+        }
+
+        .summary-label {
+            color: var(--text-secondary);
+            font-size: 0.875rem;
+        }
+
+        .roi-positive {
+            color: var(--success-500);
+        }
+
+        .roi-negative {
+            color: var(--danger-500);
+        }
+
         /* Responsive Styles */
         @media (max-width: 1200px) {
             .charts-section {
@@ -986,6 +1110,10 @@
             
             .main-content {
                 margin-left: 240px;
+            }
+
+            .financial-summary {
+                grid-template-columns: 1fr;
             }
         }
 
@@ -1042,6 +1170,10 @@
             .header-actions {
                 width: 100%;
                 justify-content: space-between;
+            }
+
+            .financial-input-group {
+                grid-template-columns: 1fr;
             }
         }
 
@@ -1185,6 +1317,100 @@
                         <div class="stat-value">92%</div>
                         <div class="stat-change positive">
                             <i class="fas fa-arrow-up"></i> 3% improvement
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Business Case Builder Section -->
+                <div class="chart-card business-case-card">
+                    <div class="chart-header">
+                        <div class="chart-title">
+                            <i class="fas fa-calculator"></i> Business Case Builder
+                        </div>
+                        <div class="chart-actions">
+                            <button class="chart-action-btn" id="createBusinessCase">
+                                <i class="fas fa-plus"></i> Create New
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <div style="padding: 1.5rem;">
+                        <!-- ROI Metrics -->
+                        <div style="margin-bottom: 20px;">
+                            <h4 style="color: #0ea5e9; margin-bottom: 15px;">
+                                <i class="fas fa-chart-line"></i> ROI Analysis Summary
+                            </h4>
+                            <div class="stats-grid" style="grid-template-columns: repeat(4, 1fr); gap: 10px; margin-bottom: 20px;">
+                                <div class="stat-card" style="background: white;">
+                                    <div class="stat-value" style="color: #059669;">317%</div>
+                                    <div class="stat-title">Estimated ROI</div>
+                                </div>
+                                <div class="stat-card" style="background: white;">
+                                    <div class="stat-value" style="color: #dc2626;">2.1 Years</div>
+                                    <div class="stat-title">Payback Period</div>
+                                </div>
+                                <div class="stat-card" style="background: white;">
+                                    <div class="stat-value" style="color: #059669;">$4.2M</div>
+                                    <div class="stat-title">5-Year Savings</div>
+                                </div>
+                                <div class="stat-card" style="background: white;">
+                                    <div class="stat-value" style="color: #2563eb;">42%</div>
+                                    <div class="stat-title">Cost Reduction</div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Financial Inputs -->
+                        <div style="background: white; padding: 20px; border-radius: 8px; border: 1px solid var(--border-color); margin-bottom: 15px;">
+                            <h5 style="color: #0ea5e9; margin-bottom: 15px;">Financial Modeling</h5>
+                            <div class="financial-input-group">
+                                <div class="financial-input">
+                                    <label for="investmentAmount">Investment Amount</label>
+                                    <input type="number" id="investmentAmount" value="1250000" step="10000">
+                                </div>
+                                <div class="financial-input">
+                                    <label for="annualSavings">Annual Operational Savings</label>
+                                    <input type="number" id="annualSavings" value="850000" step="10000">
+                                </div>
+                                <div class="financial-input">
+                                    <label for="riskMitigation">Risk Mitigation Value</label>
+                                    <input type="number" id="riskMitigation" value="320000" step="10000">
+                                </div>
+                                <div class="financial-input">
+                                    <label for="timeframe">Analysis Timeframe (Years)</label>
+                                    <input type="number" id="timeframe" value="5" min="1" max="10">
+                                </div>
+                            </div>
+                            <button class="submit-rating" id="calculateROI" style="margin-top: 15px;">
+                                <i class="fas fa-calculator"></i> Calculate ROI
+                            </button>
+                        </div>
+
+                        <!-- Business Case Recommendations -->
+                        <div style="background: white; padding: 15px; border-radius: 8px; border: 1px solid var(--border-color);">
+                            <h5 style="color: #0ea5e9; margin-bottom: 10px;">
+                                <i class="fas fa-lightbulb"></i> Investment Recommendations
+                            </h5>
+                            <div style="display: grid; gap: 10px;">
+                                <div style="display: flex; justify-content: space-between; align-items: start; padding: 12px; background: #f0f9ff; border-radius: 6px;">
+                                    <div style="flex: 1;">
+                                        <strong style="color: #0369a1;">Prioritize Network Infrastructure Refresh</strong>
+                                        <div style="font-size: 0.875rem; color: #374151; margin-top: 4px;">
+                                            Highest ROI opportunity: 450% return over 3 years through reduced downtime and maintenance costs.
+                                        </div>
+                                    </div>
+                                    <span class="eosl-badge eosl-high" style="margin: 0; background: #dbeafe; color: #1d4ed8; border-color: #93c5fd;">Priority 1</span>
+                                </div>
+                                <div style="display: flex; justify-content: space-between; align-items: start; padding: 12px; background: #f0fdf4; border-radius: 6px;">
+                                    <div style="flex: 1;">
+                                        <strong style="color: #065f46;">Phase Security Device Upgrades</strong>
+                                        <div style="font-size: 0.875rem; color: #374151; margin-top: 4px;">
+                                            280% ROI with compliance benefits and reduced security incident costs.
+                                        </div>
+                                    </div>
+                                    <span class="eosl-badge eosl-medium" style="margin: 0; background: #dcfce7; color: #166534; border-color: #bbf7d0;">Priority 2</span>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -1536,8 +1762,101 @@
 
             </div>
 
+            <!-- Business Case Page -->
+            <div class="page-content" id="business-case-page">
+                <div class="header">
+                    <h2>Business Case Builder</h2>
+                    <div class="header-actions">
+                        <button class="header-btn" id="newBusinessCase">
+                            <i class="fas fa-plus"></i> New Business Case
+                        </button>
+                        <button class="header-btn" id="exportBusinessCase">
+                            <i class="fas fa-file-export"></i> Export to PDF
+                        </button>
+                    </div>
+                </div>
+
+                <div class="chart-card">
+                    <div class="chart-header">
+                        <div class="chart-title">ROI Analysis Dashboard</div>
+                    </div>
+                    <div style="padding: 2rem;">
+                        <!-- Financial Summary -->
+                        <div class="financial-summary">
+                            <div class="summary-card">
+                                <div class="summary-value roi-positive">317%</div>
+                                <div class="summary-label">Estimated ROI</div>
+                            </div>
+                            <div class="summary-card">
+                                <div class="summary-value">2.1 Years</div>
+                                <div class="summary-label">Payback Period</div>
+                            </div>
+                            <div class="summary-card">
+                                <div class="summary-value roi-positive">$4.2M</div>
+                                <div class="summary-label">5-Year Net Savings</div>
+                            </div>
+                        </div>
+
+                        <!-- ROI Chart -->
+                        <div style="background: var(--bg-secondary); padding: 20px; border-radius: 12px; margin-bottom: 2rem;">
+                            <h4 style="color: var(--ai-purple); margin-bottom: 15px;">ROI Projection Over Time</h4>
+                            <div class="chart-container">
+                                <canvas id="roiProjectionChart"></canvas>
+                            </div>
+                        </div>
+
+                        <!-- Cost-Benefit Analysis -->
+                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 2rem;">
+                            <div>
+                                <h4 style="color: var(--ai-purple); margin-bottom: 15px;">Investment Costs</h4>
+                                <div style="background: white; padding: 15px; border-radius: 8px;">
+                                    <div style="display: flex; justify-content: between; margin-bottom: 10px;">
+                                        <span>Hardware Acquisition</span>
+                                        <strong>$850,000</strong>
+                                    </div>
+                                    <div style="display: flex; justify-content: between; margin-bottom: 10px;">
+                                        <span>Implementation Services</span>
+                                        <strong>$250,000</strong>
+                                    </div>
+                                    <div style="display: flex; justify-content: between; margin-bottom: 10px;">
+                                        <span>Training & Change Management</span>
+                                        <strong>$150,000</strong>
+                                    </div>
+                                    <div style="display: flex; justify-content: between; padding-top: 10px; border-top: 2px solid var(--border-color);">
+                                        <strong>Total Investment</strong>
+                                        <strong style="color: var(--danger-500);">$1,250,000</strong>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div>
+                                <h4 style="color: var(--ai-purple); margin-bottom: 15px;">Annual Benefits</h4>
+                                <div style="background: white; padding: 15px; border-radius: 8px;">
+                                    <div style="display: flex; justify-content: between; margin-bottom: 10px;">
+                                        <span>Reduced Maintenance Costs</span>
+                                        <strong style="color: var(--success-500);">$520,000</strong>
+                                    </div>
+                                    <div style="display: flex; justify-content: between; margin-bottom: 10px;">
+                                        <span>Improved Productivity</span>
+                                        <strong style="color: var(--success-500);">$210,000</strong>
+                                    </div>
+                                    <div style="display: flex; justify-content: between; margin-bottom: 10px;">
+                                        <span>Risk Mitigation Value</span>
+                                        <strong style="color: var(--success-500);">$120,000</strong>
+                                    </div>
+                                    <div style="display: flex; justify-content: between; padding-top: 10px; border-top: 2px solid var(--border-color);">
+                                        <strong>Total Annual Benefits</strong>
+                                        <strong style="color: var(--success-500);">$850,000</strong>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
             <!-- Additional page content for other sections would go here -->
-            <!-- EOSL Timeline, AI Predictions, Vendor Intelligence, Sustainability, Supply Chain, Business Case, Reports, Configuration -->
+            <!-- EOSL Timeline, AI Predictions, Vendor Intelligence, Sustainability, Supply Chain, Reports, Configuration -->
 
         </main>
     </div>
@@ -1547,6 +1866,437 @@
         <i class="fas fa-question"></i>
     </button>
 
-    <!-- JavaScript will be added in the next part due to length limitations -->
+    <!-- Business Case Modal -->
+    <div class="modal business-case-modal" id="businessCaseModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <div class="modal-title">
+                    <i class="fas fa-calculator"></i> Create Business Case
+                </div>
+                <button class="close-modal" id="closeBusinessCaseModal">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="case-tabs">
+                    <button class="case-tab active" data-tab="financial">Financial Analysis</button>
+                    <button class="case-tab" data-tab="risks">Risk Assessment</button>
+                    <button class="case-tab" data-tab="timeline">Implementation Plan</button>
+                </div>
+
+                <div class="case-content active" id="financial-tab">
+                    <h4 style="color: var(--ai-purple); margin-bottom: 1.5rem;">Financial Modeling</h4>
+                    <div class="financial-input-group">
+                        <div class="financial-input">
+                            <label>Project Name</label>
+                            <input type="text" id="projectName" placeholder="Enter project name" value="Network Infrastructure Refresh">
+                        </div>
+                        <div class="financial-input">
+                            <label>Total Investment ($)</label>
+                            <input type="number" id="totalInvestment" value="1250000" step="10000">
+                        </div>
+                        <div class="financial-input">
+                            <label>Annual Operational Savings ($)</label>
+                            <input type="number" id="operationalSavings" value="850000" step="10000">
+                        </div>
+                        <div class="financial-input">
+                            <label>Analysis Period (Years)</label>
+                            <input type="number" id="analysisPeriod" value="5" min="1" max="10">
+                        </div>
+                    </div>
+
+                    <div style="background: var(--bg-secondary); padding: 1.5rem; border-radius: 8px; margin-top: 1.5rem;">
+                        <h5 style="color: var(--ai-purple); margin-bottom: 1rem;">ROI Calculation Results</h5>
+                        <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 1rem;">
+                            <div style="text-align: center;">
+                                <div style="font-size: 1.5rem; font-weight: 700; color: var(--success-500);" id="roiResult">317%</div>
+                                <div style="font-size: 0.875rem; color: var(--text-secondary);">ROI</div>
+                            </div>
+                            <div style="text-align: center;">
+                                <div style="font-size: 1.5rem; font-weight: 700;" id="paybackResult">2.1</div>
+                                <div style="font-size: 0.875rem; color: var(--text-secondary);">Payback (Years)</div>
+                            </div>
+                            <div style="text-align: center;">
+                                <div style="font-size: 1.5rem; font-weight: 700; color: var(--success-500);" id="netsavingsResult">$4.2M</div>
+                                <div style="font-size: 0.875rem; color: var(--text-secondary);">Net Savings</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="case-content" id="risks-tab">
+                    <h4 style="color: var(--ai-purple); margin-bottom: 1.5rem;">Risk Assessment</h4>
+                    <div style="background: white; padding: 1.5rem; border-radius: 8px;">
+                        <div style="margin-bottom: 1rem;">
+                            <strong>Technical Risks</strong>
+                            <div style="font-size: 0.875rem; color: var(--text-secondary); margin-top: 0.5rem;">
+                                Integration challenges with legacy systems, potential compatibility issues
+                            </div>
+                        </div>
+                        <div style="margin-bottom: 1rem;">
+                            <strong>Financial Risks</strong>
+                            <div style="font-size: 0.875rem; color: var(--text-secondary); margin-top: 0.5rem;">
+                                Budget overruns, unexpected maintenance costs during transition
+                            </div>
+                        </div>
+                        <div style="margin-bottom: 1rem;">
+                            <strong>Operational Risks</strong>
+                            <div style="font-size: 0.875rem; color: var(--text-secondary); margin-top: 0.5rem;">
+                                Business disruption during implementation, staff training requirements
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="case-content" id="timeline-tab">
+                    <h4 style="color: var(--ai-purple); margin-bottom: 1.5rem;">Implementation Timeline</h4>
+                    <div style="background: white; padding: 1.5rem; border-radius: 8px;">
+                        <div class="eosl-timeline-item">
+                            <div class="eosl-timeline-date">Q1 2024</div>
+                            <div class="eosl-timeline-bar">
+                                <div class="eosl-timeline-progress" style="width: 25%; background: var(--ai-purple);"></div>
+                            </div>
+                            <div class="eosl-timeline-label">Planning & Design</div>
+                        </div>
+                        <div class="eosl-timeline-item">
+                            <div class="eosl-timeline-date">Q2 2024</div>
+                            <div class="eosl-timeline-bar">
+                                <div class="eosl-timeline-progress" style="width: 50%; background: var(--primary-500);"></div>
+                            </div>
+                            <div class="eosl-timeline-label">Procurement</div>
+                        </div>
+                        <div class="eosl-timeline-item">
+                            <div class="eosl-timeline-date">Q3-Q4 2024</div>
+                            <div class="eosl-timeline-bar">
+                                <div class="eosl-timeline-progress" style="width: 75%; background: var(--warning-500);"></div>
+                            </div>
+                            <div class="eosl-timeline-label">Implementation</div>
+                        </div>
+                    </div>
+                </div>
+
+                <button class="submit-rating" id="saveBusinessCase" style="margin-top: 2rem;">
+                    <i class="fas fa-save"></i> Save Business Case
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // =============================================
+        // Business Case Builder Implementation
+        // =============================================
+
+        // Business Case Data Model
+        const businessCaseData = {
+            currentCase: {
+                name: "Network Infrastructure Refresh",
+                investment: 1250000,
+                annualSavings: 850000,
+                timeframe: 5,
+                risks: [
+                    {
+                        category: "Technical",
+                        description: "Integration challenges with legacy systems",
+                        impact: "Medium",
+                        mitigation: "Phased implementation approach"
+                    },
+                    {
+                        category: "Financial", 
+                        description: "Budget overruns during transition",
+                        impact: "High",
+                        mitigation: "Contingency budget allocation"
+                    }
+                ],
+                timeline: [
+                    { phase: "Planning", quarter: "Q1 2024", progress: 25 },
+                    { phase: "Procurement", quarter: "Q2 2024", progress: 50 },
+                    { phase: "Implementation", quarter: "Q3-Q4 2024", progress: 75 }
+                ]
+            },
+            calculations: {
+                getROI: function(investment, annualSavings, years) {
+                    const totalSavings = annualSavings * years;
+                    return ((totalSavings - investment) / investment) * 100;
+                },
+                getPaybackPeriod: function(investment, annualSavings) {
+                    return investment / annualSavings;
+                },
+                getNetSavings: function(investment, annualSavings, years) {
+                    return (annualSavings * years) - investment;
+                }
+            }
+        };
+
+        // Initialize Business Case Features
+        function initializeBusinessCase() {
+            // Business Case Modal
+            document.getElementById('createBusinessCase').addEventListener('click', function() {
+                document.getElementById('businessCaseModal').style.display = 'flex';
+            });
+
+            document.getElementById('closeBusinessCaseModal').addEventListener('click', function() {
+                document.getElementById('businessCaseModal').style.display = 'none';
+            });
+
+            // Tab Switching
+            document.querySelectorAll('.case-tab').forEach(tab => {
+                tab.addEventListener('click', function() {
+                    // Remove active class from all tabs and contents
+                    document.querySelectorAll('.case-tab').forEach(t => t.classList.remove('active'));
+                    document.querySelectorAll('.case-content').forEach(c => c.classList.remove('active'));
+                    
+                    // Add active class to clicked tab and corresponding content
+                    this.classList.add('active');
+                    const tabId = this.getAttribute('data-tab');
+                    document.getElementById(`${tabId}-tab`).classList.add('active');
+                });
+            });
+
+            // ROI Calculation
+            document.getElementById('calculateROI').addEventListener('click', calculateROI);
+            document.getElementById('totalInvestment').addEventListener('input', calculateROI);
+            document.getElementById('operationalSavings').addEventListener('input', calculateROI);
+            document.getElementById('analysisPeriod').addEventListener('input', calculateROI);
+
+            // Save Business Case
+            document.getElementById('saveBusinessCase').addEventListener('click', function() {
+                const projectName = document.getElementById('projectName').value;
+                alert(`Business Case "${projectName}" saved successfully!`);
+                document.getElementById('businessCaseModal').style.display = 'none';
+            });
+
+            // Initialize ROI Chart
+            initializeROIChart();
+        }
+
+        // ROI Calculation Function
+        function calculateROI() {
+            const investment = parseFloat(document.getElementById('totalInvestment').value) || parseFloat(document.getElementById('investmentAmount').value);
+            const annualSavings = parseFloat(document.getElementById('operationalSavings').value) || parseFloat(document.getElementById('annualSavings').value);
+            const years = parseFloat(document.getElementById('analysisPeriod').value) || parseFloat(document.getElementById('timeframe').value);
+
+            const roi = businessCaseData.calculations.getROI(investment, annualSavings, years);
+            const payback = businessCaseData.calculations.getPaybackPeriod(investment, annualSavings);
+            const netSavings = businessCaseData.calculations.getNetSavings(investment, annualSavings, years);
+
+            // Update results
+            document.getElementById('roiResult').textContent = `${roi.toFixed(0)}%`;
+            document.getElementById('paybackResult').textContent = payback.toFixed(1);
+            document.getElementById('netsavingsResult').textContent = `$${(netSavings / 1000000).toFixed(1)}M`;
+
+            // Update dashboard metrics
+            document.querySelector('.stat-card:nth-child(1) .stat-value').textContent = `${roi.toFixed(0)}%`;
+            document.querySelector('.stat-card:nth-child(2) .stat-value').textContent = `${payback.toFixed(1)} Years`;
+            document.querySelector('.stat-card:nth-child(3) .stat-value').textContent = `$${(netSavings / 1000000).toFixed(1)}M`;
+        }
+
+        // ROI Projection Chart
+        function initializeROIChart() {
+            const ctx = document.getElementById('roiProjectionChart').getContext('2d');
+            const roiChart = new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: ['Year 1', 'Year 2', 'Year 3', 'Year 4', 'Year 5'],
+                    datasets: [
+                        {
+                            label: 'Cumulative Savings',
+                            data: [850000, 1700000, 2550000, 3400000, 4250000],
+                            borderColor: '#10b981',
+                            backgroundColor: 'rgba(16, 185, 129, 0.1)',
+                            borderWidth: 3,
+                            tension: 0.4,
+                            fill: true
+                        },
+                        {
+                            label: 'Investment Recovery',
+                            data: [-400000, 450000, 1300000, 2150000, 3000000],
+                            borderColor: '#3b82f6',
+                            backgroundColor: 'transparent',
+                            borderWidth: 2,
+                            borderDash: [5, 5],
+                            tension: 0.4
+                        }
+                    ]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            position: 'top',
+                        },
+                        tooltip: {
+                            mode: 'index',
+                            intersect: false,
+                            callbacks: {
+                                label: function(context) {
+                                    return `${context.dataset.label}: $${(context.raw / 1000).toFixed(0)}K`;
+                                }
+                            }
+                        }
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            ticks: {
+                                callback: function(value) {
+                                    return '$' + (value / 1000) + 'K';
+                                }
+                            },
+                            title: {
+                                display: true,
+                                text: 'Amount ($)'
+                            }
+                        }
+                    }
+                }
+            });
+        }
+
+        // =============================================
+        // Existing Application Functionality
+        // =============================================
+
+        // Theme Toggle
+        const themeToggle = document.getElementById('themeToggle');
+        const body = document.body;
+
+        themeToggle.addEventListener('click', () => {
+            if (body.classList.contains('light')) {
+                body.classList.remove('light');
+                body.classList.add('dark');
+                themeToggle.innerHTML = '<i class="fas fa-sun"></i>';
+            } else {
+                body.classList.remove('dark');
+                body.classList.add('light');
+                themeToggle.innerHTML = '<i class="fas fa-moon"></i>';
+            }
+        });
+
+        // Page Navigation
+        const navLinks = document.querySelectorAll('.nav-links a[data-page]');
+        const pageContents = document.querySelectorAll('.page-content');
+
+        navLinks.forEach(link => {
+            link.addEventListener('click', function(e) {
+                e.preventDefault();
+                const targetPage = this.getAttribute('data-page');
+                
+                // Update active states
+                navLinks.forEach(l => l.classList.remove('active'));
+                this.classList.add('active');
+                
+                // Show target page
+                pageContents.forEach(page => page.classList.remove('active'));
+                document.getElementById(`${targetPage}-page`).classList.add('active');
+                
+                // Update header title
+                const pageTitle = this.textContent.trim();
+                document.querySelector('.header h2').textContent = pageTitle;
+            });
+        });
+
+        // Division Filter
+        document.getElementById('divisionFilter').addEventListener('change', function() {
+            const selectedDivision = this.value;
+            console.log(`Filtering by division: ${selectedDivision}`);
+            // In real implementation, this would filter all data visualizations
+        });
+
+        // Refresh Button
+        document.getElementById('refreshBtn').addEventListener('click', function() {
+            this.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Refreshing...';
+            setTimeout(() => {
+                this.innerHTML = '<i class="fas fa-sync-alt"></i> Refresh Data';
+                alert('Data refreshed successfully!');
+            }, 1500);
+        });
+
+        // AI Forecast Chart
+        function initializeAIForecastChart() {
+            const ctx = document.getElementById('aiForecastChart').getContext('2d');
+            const aiForecastChart = new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'],
+                    datasets: [
+                        {
+                            label: 'Predicted EOSL Devices',
+                            data: [15, 18, 22, 25, 28, 32, 35, 38, 35, 32, 28, 25],
+                            borderColor: '#8b5cf6',
+                            backgroundColor: 'rgba(139, 92, 246, 0.1)',
+                            borderWidth: 3,
+                            tension: 0.4,
+                            fill: true,
+                            pointBackgroundColor: '#8b5cf6',
+                            pointBorderColor: '#ffffff',
+                            pointBorderWidth: 2,
+                            pointRadius: 5
+                        },
+                        {
+                            label: 'Actual EOSL Devices',
+                            data: [14, 17, 21, null, null, null, null, null, null, null, null, null],
+                            borderColor: '#10b981',
+                            backgroundColor: 'transparent',
+                            borderWidth: 2,
+                            borderDash: [5, 5],
+                            tension: 0.4,
+                            pointBackgroundColor: '#10b981',
+                            pointBorderColor: '#ffffff',
+                            pointBorderWidth: 2,
+                            pointRadius: 4
+                        }
+                    ]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            display: true,
+                            position: 'top',
+                        }
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            title: {
+                                display: true,
+                                text: 'Number of Devices'
+                            }
+                        }
+                    }
+                }
+            });
+        }
+
+        // AI Configuration
+        document.getElementById('aiSettings').addEventListener('click', function() {
+            alert('AI Configuration: Model training, confidence thresholds, and prediction parameters can be adjusted here.');
+        });
+
+        // EOSL Timeline Navigation
+        document.getElementById('viewEOSLTimeline').addEventListener('click', function() {
+            document.querySelector('.nav-links a[data-page="eosl-timeline"]').click();
+        });
+
+        // Help Button
+        document.getElementById('helpButton').addEventListener('click', function() {
+            alert('NetLife Pro Assistant: How can I help you with EOSL management today?');
+        });
+
+        // Initialize all features when page loads
+        document.addEventListener('DOMContentLoaded', function() {
+            initializeAIForecastChart();
+            initializeBusinessCase();
+            calculateROI(); // Calculate initial ROI
+        });
+
+        // Close modals when clicking outside
+        window.addEventListener('click', function(event) {
+            if (event.target.classList.contains('modal')) {
+                event.target.style.display = 'none';
+            }
+        });
+    </script>
 </body>
 </html>
