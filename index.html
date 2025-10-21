@@ -1,0 +1,1077 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NetLife Pro - Network Lifecycle Management</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        :root {
+            --primary-500: #3b82f6;
+            --primary-600: #2563eb;
+            --success-500: #10b981;
+            --success-600: #059669;
+            --warning-500: #f59e0b;
+            --warning-600: #d97706;
+            --danger-500: #ef4444;
+            --danger-600: #dc2626;
+            --eosl-critical: #dc2626;
+            --eosl-high: #f59e0b;
+            --eosl-medium: #3b82f6;
+            --eosl-low: #10b981;
+            --gray-100: #f3f4f6;
+            --gray-200: #e5e7eb;
+            --gray-300: #d1d5db;
+            --gray-700: #374151;
+            --gray-800: #1f2937;
+            --gray-900: #111827;
+        }
+
+        .dark {
+            --bg-primary: var(--gray-900);
+            --bg-secondary: var(--gray-800);
+            --bg-card: var(--gray-800);
+            --text-primary: white;
+            --text-secondary: var(--gray-300);
+            --border-color: var(--gray-700);
+        }
+
+        .light {
+            --bg-primary: white;
+            --bg-secondary: var(--gray-100);
+            --bg-card: white;
+            --text-primary: var(--gray-900);
+            --text-secondary: var(--gray-700);
+            --border-color: var(--gray-200);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            transition: background-color 0.3s, color 0.3s;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--bg-primary);
+            color: var(--text-primary);
+            line-height: 1.6;
+        }
+
+        .container {
+            display: flex;
+            min-height: 100vh;
+        }
+
+        /* EOSL Specific Styles */
+        .eosl-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            padding: 3px 8px;
+            border-radius: 12px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            margin-left: 8px;
+        }
+
+        .eosl-critical {
+            background: #fee2e2;
+            color: #dc2626;
+            border: 1px solid #fecaca;
+        }
+
+        .eosl-high {
+            background: #fef3c7;
+            color: #d97706;
+            border: 1px solid #fde68a;
+        }
+
+        .eosl-medium {
+            background: #dbeafe;
+            color: #2563eb;
+            border: 1px solid #93c5fd;
+        }
+
+        .eosl-low {
+            background: #d1fae5;
+            color: #059669;
+            border: 1px solid #a7f3d0;
+        }
+
+        .division-filter {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-right: 15px;
+        }
+
+        .division-filter select {
+            padding: 6px 12px;
+            border: 1px solid var(--border-color);
+            border-radius: 6px;
+            background: var(--bg-card);
+            color: var(--text-primary);
+        }
+
+        .risk-matrix {
+            display: grid;
+            grid-template-columns: repeat(5, 1fr);
+            gap: 8px;
+            margin-top: 15px;
+        }
+
+        .risk-cell {
+            height: 50px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 6px;
+            font-weight: 600;
+            color: white;
+            text-align: center;
+            padding: 5px;
+            font-size: 0.75rem;
+            cursor: pointer;
+        }
+
+        .risk-cell:hover {
+            opacity: 0.8;
+            transform: scale(1.05);
+        }
+
+        .risk-low {
+            background: var(--eosl-low);
+        }
+
+        .risk-medium {
+            background: var(--eosl-medium);
+        }
+
+        .risk-high {
+            background: var(--eosl-high);
+        }
+
+        .risk-critical {
+            background: var(--eosl-critical);
+        }
+
+        .eosl-timeline-item {
+            display: flex;
+            margin-bottom: 12px;
+            align-items: center;
+            padding: 10px;
+            background: var(--bg-secondary);
+            border-radius: 8px;
+        }
+
+        .eosl-timeline-date {
+            width: 100px;
+            font-weight: 600;
+            color: var(--primary-500);
+        }
+
+        .eosl-timeline-bar {
+            flex: 1;
+            height: 6px;
+            background: var(--gray-300);
+            border-radius: 3px;
+            margin: 0 15px;
+            position: relative;
+        }
+
+        .eosl-timeline-progress {
+            height: 100%;
+            border-radius: 3px;
+        }
+
+        .eosl-timeline-label {
+            width: 150px;
+            font-size: 0.9rem;
+            font-weight: 500;
+        }
+
+        .device-list {
+            margin-top: 15px;
+        }
+
+        .device-item {
+            display: flex;
+            justify-content: space-between;
+            padding: 12px;
+            border-bottom: 1px solid var(--border-color);
+            align-items: center;
+        }
+
+        .device-item:hover {
+            background: var(--bg-secondary);
+        }
+
+        .device-name {
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .device-status {
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 0.75rem;
+            font-weight: 600;
+        }
+
+        .status-critical {
+            background: #fee2e2;
+            color: var(--eosl-critical);
+        }
+
+        .status-warning {
+            background: #fef3c7;
+            color: var(--eosl-high);
+        }
+
+        .status-ok {
+            background: #d1fae5;
+            color: var(--eosl-low);
+        }
+
+        /* Existing styles remain the same, adding only new EOSL styles above */
+        /* ... (all your existing CSS styles remain unchanged) ... */
+        
+        /* Sidebar Styles */
+        .sidebar {
+            width: 250px;
+            background-color: var(--bg-secondary);
+            padding: 1.5rem 1rem;
+            border-right: 1px solid var(--border-color);
+            position: fixed;
+            height: 100vh;
+            overflow-y: auto;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            margin-bottom: 2rem;
+            padding: 0 0.5rem;
+        }
+
+        .logo i {
+            font-size: 1.8rem;
+            color: var(--primary-500);
+            margin-right: 0.75rem;
+        }
+
+        .logo-text {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .logo h1 {
+            font-size: 1.5rem;
+            font-weight: 700;
+            line-height: 1.2;
+        }
+
+        .logo .subtitle {
+            font-size: 0.75rem;
+            color: var(--text-secondary);
+            margin-top: 0.25rem;
+        }
+
+        .nav-links {
+            list-style: none;
+        }
+
+        .nav-links li {
+            margin-bottom: 0.5rem;
+        }
+
+        .nav-links a {
+            display: flex;
+            align-items: center;
+            padding: 0.75rem 1rem;
+            border-radius: 0.5rem;
+            color: var(--text-secondary);
+            text-decoration: none;
+        }
+
+        .nav-links a:hover, .nav-links a.active {
+            background-color: var(--primary-500);
+            color: white;
+        }
+
+        .nav-links i {
+            margin-right: 0.75rem;
+            width: 20px;
+            text-align: center;
+        }
+
+        /* Main Content Styles */
+        .main-content {
+            flex: 1;
+            padding: 1.5rem 2rem;
+            overflow-y: auto;
+            margin-left: 250px;
+        }
+
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2rem;
+        }
+
+        .header h2 {
+            font-size: 1.8rem;
+            font-weight: 700;
+        }
+
+        .header-actions {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        /* ... (rest of your existing CSS remains the same) ... */
+
+    </style>
+</head>
+<body class="light">
+    <div class="container">
+        <!-- Sidebar -->
+        <aside class="sidebar">
+            <div class="logo">
+                <i class="fas fa-network-wired"></i>
+                <div class="logo-text">
+                    <h1>NetLife Pro</h1>
+                    <div class="subtitle">Network Lifecycle Management</div>
+                </div>
+            </div>
+            <ul class="nav-links">
+                <li><a href="#" class="active" data-page="dashboard"><i class="fas fa-home"></i> Dashboard</a></li>
+                <li><a href="#" data-page="eosl-timeline"><i class="fas fa-calendar-times"></i> EOSL Timeline</a></li>
+                <li><a href="#" data-page="analytics"><i class="fas fa-chart-bar"></i> Analytics</a></li>
+                <li><a href="#" data-page="configuration"><i class="fas fa-cogs"></i> Configuration</a></li>
+                <li><a href="#" data-page="history"><i class="fas fa-history"></i> History</a></li>
+                <li>
+                    <div class="dropdown">
+                        <a href="#" data-page="reports"><i class="fas fa-file-alt"></i> Reports <i class="fas fa-chevron-down"></i></a>
+                        <div class="dropdown-content">
+                            <a href="#" data-report="executive">Executive Report</a>
+                            <a href="#" data-report="management">Management Report</a>
+                            <a href="#" data-report="operations">Operations Report</a>
+                            <a href="#" data-report="eosl">EOSL Risk Report</a>
+                            <a href="#" data-report="executive-management">Executive + Management</a>
+                            <a href="#" data-report="management-operations">Management + Operations</a>
+                            <a href="#" data-report="executive-operations">Executive + Operations</a>
+                            <a href="#" data-report="technical">Technical Analysis</a>
+                            <a href="#" data-report="custom" id="customReportOption">Custom Report</a>
+                        </div>
+                    </div>
+                </li>
+                <li><a href="#" data-page="alerts"><i class="fas fa-bell"></i> Alerts</a></li>
+                <li><a href="#" data-page="users"><i class="fas fa-users"></i> Users</a></li>
+                <li><a href="#" data-page="support"><i class="fas fa-question-circle"></i> Support</a></li>
+            </ul>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <!-- Dashboard Page -->
+            <div class="page-content active" id="dashboard-page">
+                <!-- Hero Section -->
+                <div class="hero-section">
+                    <h1 class="hero-title">Intelligent Network Lifecycle Management Platform</h1>
+                    <p class="hero-subtitle">Transform reactive maintenance into predictive business assurance</p>
+                    <div class="hero-features">
+                        <div class="hero-feature">
+                            <i class="fas fa-brain"></i>
+                            <h3>AI-Powered Intelligence</h3>
+                            <p>Predictive analytics and automated insights</p>
+                        </div>
+                        <div class="hero-feature">
+                            <i class="fas fa-shield-alt"></i>
+                            <h3>Proactive Security</h3>
+                            <p>Continuous monitoring and threat prevention</p>
+                        </div>
+                        <div class="hero-feature">
+                            <i class="fas fa-rocket"></i>
+                            <h3>Performance Optimization</h3>
+                            <p>Automated tuning and capacity planning</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Header -->
+                <div class="header">
+                    <h2>Network Dashboard</h2>
+                    <div class="header-actions">
+                        <div class="division-filter">
+                            <label>Division:</label>
+                            <select id="divisionFilter">
+                                <option value="all">All Divisions</option>
+                                <option value="networks">Networks Division</option>
+                                <option value="it">IT Division</option>
+                                <option value="security">Security Division</option>
+                            </select>
+                        </div>
+                        <button class="header-btn" id="refreshBtn">
+                            <i class="fas fa-sync-alt"></i> Refresh
+                        </button>
+                        <button class="header-btn" id="homeBtn">
+                            <i class="fas fa-home"></i> Home
+                        </button>
+                        <button class="theme-toggle" id="themeToggle">
+                            <i class="fas fa-moon"></i>
+                        </button>
+                        <div class="user-profile">
+                            <div class="user-avatar">MM</div>
+                            <span>MJ Mashifane<br><small>Network Engineer & Administrator</small></span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Enhanced Stats Grid with EOSL -->
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <div class="stat-header">
+                            <div class="stat-title">Network Health</div>
+                            <div class="stat-icon" style="background-color: var(--success-500);">
+                                <i class="fas fa-heartbeat"></i>
+                            </div>
+                        </div>
+                        <div class="stat-value">94%</div>
+                        <div class="stat-change positive">
+                            <i class="fas fa-arrow-up"></i> 2% from last week
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-header">
+                            <div class="stat-title">Devices Online</div>
+                            <div class="stat-icon" style="background-color: var(--primary-500);">
+                                <i class="fas fa-server"></i>
+                            </div>
+                        </div>
+                        <div class="stat-value">248/256</div>
+                        <div class="stat-change positive">
+                            <i class="fas fa-arrow-up"></i> 8 devices restored
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-header">
+                            <div class="stat-title">EOSL Critical Risk</div>
+                            <div class="stat-icon" style="background-color: var(--danger-500);">
+                                <i class="fas fa-exclamation-triangle"></i>
+                            </div>
+                        </div>
+                        <div class="stat-value">14</div>
+                        <div class="stat-change negative">
+                            <i class="fas fa-arrow-up"></i> 3 new this month
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-header">
+                            <div class="stat-title">Budget Impact</div>
+                            <div class="stat-icon" style="background-color: var(--warning-500);">
+                                <i class="fas fa-dollar-sign"></i>
+                            </div>
+                        </div>
+                        <div class="stat-value">$3.2M</div>
+                        <div class="stat-change positive">
+                            <i class="fas fa-arrow-down"></i> 8% from last quarter
+                        </div>
+                    </div>
+                </div>
+
+                <!-- EOSL Risk Overview Section -->
+                <div class="chart-card">
+                    <div class="chart-header">
+                        <div class="chart-title">
+                            <i class="fas fa-calendar-times"></i> EOSL Risk Overview
+                        </div>
+                        <div class="chart-actions">
+                            <button class="chart-action-btn" id="viewEOSLTimeline">
+                                <i class="fas fa-external-link-alt"></i> View Timeline
+                            </button>
+                        </div>
+                    </div>
+                    <div style="padding: 1.5rem;">
+                        <div class="risk-matrix">
+                            <div class="risk-cell risk-low">Low Impact<br>Low Probability</div>
+                            <div class="risk-cell risk-medium">Med Impact<br>Low Probability</div>
+                            <div class="risk-cell risk-high">High Impact<br>Low Probability</div>
+                            <div class="risk-cell risk-high">Low Impact<br>Med Probability</div>
+                            <div class="risk-cell risk-critical">Med Impact<br>Med Probability</div>
+                            <div class="risk-cell risk-critical">High Impact<br>Med Probability</div>
+                            <div class="risk-cell risk-high">Low Impact<br>High Probability</div>
+                            <div class="risk-cell risk-critical">Med Impact<br>High Probability</div>
+                            <div class="risk-cell risk-critical">High Impact<br>High Probability</div>
+                            <div class="risk-cell" style="background: #9ca3af; color: #333;">No Data</div>
+                        </div>
+                        
+                        <div class="device-list">
+                            <h4 style="margin: 20px 0 10px 0;">High Priority EOSL Devices</h4>
+                            <div class="device-item">
+                                <div class="device-name">
+                                    <i class="fas fa-server"></i>
+                                    Cisco Catalyst 9300
+                                    <span class="eosl-badge eosl-critical">Critical</span>
+                                </div>
+                                <div class="device-status status-critical">EOSL: Dec 2024</div>
+                            </div>
+                            <div class="device-item">
+                                <div class="device-name">
+                                    <i class="fas fa-shield-alt"></i>
+                                    Juniper SRX Firewall
+                                    <span class="eosl-badge eosl-critical">Critical</span>
+                                </div>
+                                <div class="device-status status-critical">EOSL: Mar 2025</div>
+                            </div>
+                            <div class="device-item">
+                                <div class="device-name">
+                                    <i class="fas fa-hdd"></i>
+                                    Dell PowerEdge R740
+                                    <span class="eosl-badge eosl-high">High Risk</span>
+                                </div>
+                                <div class="device-status status-warning">EOSL: Jun 2025</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- AI Intelligence Section -->
+                <div class="chart-card">
+                    <div class="chart-header">
+                        <div class="chart-title">
+                            <i class="fas fa-brain"></i> AI-Powered Network Intelligence
+                        </div>
+                    </div>
+                    <div style="padding: 1.5rem;">
+                        <p style="margin-bottom: 1rem; font-size: 1.1rem; color: var(--text-secondary);">
+                            Predictive analytics and intelligent lifecycle management for modern network infrastructure
+                        </p>
+                        <div class="stats-grid" style="grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));">
+                            <div class="stat-card">
+                                <div class="stat-header">
+                                    <div class="stat-title">Predicted Issues</div>
+                                    <div class="stat-icon" style="background-color: var(--warning-500);">
+                                        <i class="fas fa-exclamation-triangle"></i>
+                                    </div>
+                                </div>
+                                <div class="stat-value">3</div>
+                                <div class="stat-change">
+                                    Next 7 days
+                                </div>
+                            </div>
+                            <div class="stat-card">
+                                <div class="stat-header">
+                                    <div class="stat-title">EOSL Alerts</div>
+                                    <div class="stat-icon" style="background-color: var(--danger-500);">
+                                        <i class="fas fa-calendar-times"></i>
+                                    </div>
+                                </div>
+                                <div class="stat-value">8</div>
+                                <div class="stat-change">
+                                    This quarter
+                                </div>
+                            </div>
+                            <div class="stat-card">
+                                <div class="stat-header">
+                                    <div class="stat-title">Cost Savings</div>
+                                    <div class="stat-icon" style="background-color: var(--primary-500);">
+                                        <i class="fas fa-chart-line"></i>
+                                    </div>
+                                </div>
+                                <div class="stat-value">24%</div>
+                                <div class="stat-change">
+                                    vs last quarter
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Charts Section -->
+                <div class="charts-section">
+                    <div class="chart-card">
+                        <div class="chart-header">
+                            <div class="chart-title">EOSL Timeline Forecast</div>
+                            <div class="chart-actions">
+                                <button class="chart-action-btn"><i class="fas fa-ellipsis-v"></i></button>
+                            </div>
+                        </div>
+                        <div class="chart-container">
+                            <canvas id="eoslTimelineChart"></canvas>
+                        </div>
+                    </div>
+                    <div class="chart-card">
+                        <div class="chart-header">
+                            <div class="chart-title">Budget Impact Projection</div>
+                            <div class="chart-actions">
+                                <button class="chart-action-btn"><i class="fas fa-ellipsis-v"></i></button>
+                            </div>
+                        </div>
+                        <div class="chart-container">
+                            <canvas id="budgetChart"></canvas>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Existing sections remain but enhanced with EOSL data -->
+                <!-- ... (rest of your existing dashboard content) ... -->
+
+            </div>
+
+            <!-- NEW: EOSL Timeline Page -->
+            <div class="page-content" id="eosl-timeline-page">
+                <div class="header">
+                    <h2>EOSL Management Timeline</h2>
+                    <div class="header-actions">
+                        <div class="division-filter">
+                            <label>Division:</label>
+                            <select id="eoslDivisionFilter">
+                                <option value="all">All Divisions</option>
+                                <option value="networks">Networks Division</option>
+                                <option value="it">IT Division</option>
+                                <option value="security">Security Division</option>
+                            </select>
+                        </div>
+                        <button class="header-btn" id="exportEOSL">
+                            <i class="fas fa-file-export"></i> Export Report
+                        </button>
+                        <button class="header-btn" id="refreshEOSL">
+                            <i class="fas fa-sync-alt"></i> Refresh
+                        </button>
+                    </div>
+                </div>
+
+                <!-- EOSL Metrics -->
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <div class="stat-header">
+                            <div class="stat-title">Devices at EOSL Risk</div>
+                            <div class="stat-icon" style="background-color: var(--danger-500);">
+                                <i class="fas fa-exclamation-triangle"></i>
+                            </div>
+                        </div>
+                        <div class="stat-value">142</div>
+                        <div class="stat-change negative">
+                            <i class="fas fa-arrow-up"></i> 12% increase
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-header">
+                            <div class="stat-title">Critical Risk Items</div>
+                            <div class="stat-icon" style="background-color: var(--warning-500);">
+                                <i class="fas fa-fire"></i>
+                            </div>
+                        </div>
+                        <div class="stat-value">28</div>
+                        <div class="stat-change negative">
+                            <i class="fas fa-arrow-up"></i> 5% increase
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-header">
+                            <div class="stat-title">Migration Progress</div>
+                            <div class="stat-icon" style="background-color: var(--success-500);">
+                                <i class="fas fa-tasks"></i>
+                            </div>
+                        </div>
+                        <div class="stat-value">64%</div>
+                        <div class="stat-change positive">
+                            <i class="fas fa-arrow-up"></i> 12% progress
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-header">
+                            <div class="stat-title">Budget Impact</div>
+                            <div class="stat-icon" style="background-color: var(--primary-500);">
+                                <i class="fas fa-dollar-sign"></i>
+                            </div>
+                        </div>
+                        <div class="stat-value">$3.2M</div>
+                        <div class="stat-change positive">
+                            <i class="fas fa-arrow-down"></i> 8% savings
+                        </div>
+                    </div>
+                </div>
+
+                <!-- EOSL Timeline Visualization -->
+                <div class="chart-card">
+                    <div class="chart-header">
+                        <div class="chart-title">EOSL Timeline Calendar</div>
+                        <div class="chart-actions">
+                            <button class="chart-action-btn"><i class="fas fa-filter"></i> Filter</button>
+                            <button class="chart-action-btn"><i class="fas fa-download"></i> Export</button>
+                        </div>
+                    </div>
+                    <div class="chart-container">
+                        <canvas id="eoslCalendarChart"></canvas>
+                    </div>
+                </div>
+
+                <!-- Migration Progress Tracking -->
+                <div class="chart-card">
+                    <div class="chart-header">
+                        <div class="chart-title">Migration Progress Tracking</div>
+                    </div>
+                    <div style="padding: 1.5rem;">
+                        <div class="eosl-timeline-item">
+                            <div class="eosl-timeline-date">Q1 2024</div>
+                            <div class="eosl-timeline-bar">
+                                <div class="eosl-timeline-progress" style="width: 85%; background: var(--success-500);"></div>
+                            </div>
+                            <div class="eosl-timeline-label">Network Switches</div>
+                            <span class="eosl-badge eosl-low">85% Complete</span>
+                        </div>
+                        <div class="eosl-timeline-item">
+                            <div class="eosl-timeline-date">Q2 2024</div>
+                            <div class="eosl-timeline-bar">
+                                <div class="eosl-timeline-progress" style="width: 65%; background: var(--warning-500);"></div>
+                            </div>
+                            <div class="eosl-timeline-label">Firewall Devices</div>
+                            <span class="eosl-badge eosl-medium">65% Complete</span>
+                        </div>
+                        <div class="eosl-timeline-item">
+                            <div class="eosl-timeline-date">Q3 2024</div>
+                            <div class="eosl-timeline-bar">
+                                <div class="eosl-timeline-progress" style="width: 30%; background: var(--danger-500);"></div>
+                            </div>
+                            <div class="eosl-timeline-label">Server Hardware</div>
+                            <span class="eosl-badge eosl-high">30% Complete</span>
+                        </div>
+                        <div class="eosl-timeline-item">
+                            <div class="eosl-timeline-date">Q4 2024</div>
+                            <div class="eosl-timeline-bar">
+                                <div class="eosl-timeline-progress" style="width: 10%; background: var(--gray-300);"></div>
+                            </div>
+                            <div class="eosl-timeline-label">Storage Systems</div>
+                            <span class="eosl-badge eosl-critical">10% Complete</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- High Priority Devices List -->
+                <div class="chart-card">
+                    <div class="chart-header">
+                        <div class="chart-title">High Priority EOSL Devices</div>
+                        <div class="chart-actions">
+                            <button class="chart-action-btn"><i class="fas fa-plus"></i> Add Device</button>
+                        </div>
+                    </div>
+                    <div class="device-list">
+                        <div class="device-item">
+                            <div class="device-name">
+                                <i class="fas fa-server"></i>
+                                Cisco Catalyst 9300
+                                <span class="eosl-badge eosl-critical">Critical</span>
+                            </div>
+                            <div class="device-status status-critical">EOSL: Dec 2024</div>
+                        </div>
+                        <div class="device-item">
+                            <div class="device-name">
+                                <i class="fas fa-shield-alt"></i>
+                                Juniper SRX Firewall
+                                <span class="eosl-badge eosl-critical">Critical</span>
+                            </div>
+                            <div class="device-status status-critical">EOSL: Mar 2025</div>
+                        </div>
+                        <div class="device-item">
+                            <div class="device-name">
+                                <i class="fas fa-hdd"></i>
+                                Dell PowerEdge R740
+                                <span class="eosl-badge eosl-high">High Risk</span>
+                            </div>
+                            <div class="device-status status-warning">EOSL: Jun 2025</div>
+                        </div>
+                        <div class="device-item">
+                            <div class="device-name">
+                                <i class="fas fa-network-wired"></i>
+                                HP Aruba 2930F
+                                <span class="eosl-badge eosl-high">High Risk</span>
+                            </div>
+                            <div class="device-status status-warning">EOSL: Aug 2025</div>
+                        </div>
+                        <div class="device-item">
+                            <div class="device-name">
+                                <i class="fas fa-fire"></i>
+                                Palo Alto PA-3220
+                                <span class="eosl-badge eosl-medium">Medium Risk</span>
+                            </div>
+                            <div class="device-status status-ok">EOSL: Dec 2025</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Existing Analytics Page -->
+            <div class="page-content" id="analytics-page">
+                <!-- ... (your existing analytics content) ... -->
+            </div>
+
+            <!-- Existing Configuration Page -->
+            <div class="page-content" id="configuration-page">
+                <!-- ... (your existing configuration content) ... -->
+            </div>
+
+            <!-- Existing Reports Page (enhanced with EOSL reports) -->
+            <div class="page-content" id="reports-page">
+                <!-- ... (your existing reports content) ... -->
+            </div>
+
+            <!-- Other existing pages remain unchanged -->
+        </main>
+    </div>
+
+    <!-- Help Button -->
+    <button class="help-button" id="helpButton">
+        <i class="fas fa-question"></i>
+    </button>
+
+    <!-- Your existing modals remain unchanged -->
+    <!-- ... (all your existing modal HTML) ... -->
+
+    <script>
+        // Enhanced EOSL Data Structure
+        const eoslData = {
+            divisions: {
+                networks: { name: "Networks Division", color: "#3b82f6" },
+                it: { name: "IT Division", color: "#10b981" },
+                security: { name: "Security Division", color: "#ef4444" }
+            },
+            devices: [
+                {
+                    id: 1,
+                    name: "Cisco Catalyst 9300",
+                    type: "switch",
+                    division: "networks",
+                    eosl_date: "2024-12-31",
+                    risk_score: 95,
+                    business_criticality: "high",
+                    replacement_cost: 15000,
+                    migration_status: "not_started",
+                    vendor: "Cisco"
+                },
+                {
+                    id: 2,
+                    name: "Juniper SRX Firewall",
+                    type: "firewall", 
+                    division: "security",
+                    eosl_date: "2025-03-15",
+                    risk_score: 92,
+                    business_criticality: "high",
+                    replacement_cost: 25000,
+                    migration_status: "planning",
+                    vendor: "Juniper"
+                },
+                {
+                    id: 3,
+                    name: "Dell PowerEdge R740",
+                    type: "server",
+                    division: "it",
+                    eosl_date: "2025-06-30", 
+                    risk_score: 78,
+                    business_criticality: "medium",
+                    replacement_cost: 18000,
+                    migration_status: "not_started",
+                    vendor: "Dell"
+                }
+                // Add more devices as needed
+            ]
+        };
+
+        // Enhanced report data with EOSL reports
+        const reportTemplates = {
+            // ... (your existing reports) ...
+            eosl: {
+                title: "EOSL Risk Assessment Report",
+                sections: [
+                    {
+                        title: "Executive EOSL Summary",
+                        content: "Critical review of End-of-Service-Life devices impacting network infrastructure and business operations."
+                    },
+                    {
+                        title: "Risk Assessment Metrics",
+                        metrics: [
+                            { label: "Critical Risk Devices", value: "14", trend: "negative" },
+                            { label: "Total Budget Impact", value: "$3.2M", trend: "warning" },
+                            { label: "Migration Progress", value: "64%", trend: "positive" },
+                            { label: "Compliance Risk", value: "High", trend: "negative" }
+                        ]
+                    }
+                ]
+            }
+        };
+
+        // EOSL Chart Initialization
+        const eoslTimelineCtx = document.getElementById('eoslTimelineChart').getContext('2d');
+        const eoslTimelineChart = new Chart(eoslTimelineCtx, {
+            type: 'bar',
+            data: {
+                labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'],
+                datasets: [{
+                    label: 'Devices Reaching EOSL',
+                    data: [12, 19, 15, 25, 22, 30, 28, 35, 30, 25, 20, 15],
+                    backgroundColor: '#ef4444',
+                    borderColor: '#dc2626',
+                    borderWidth: 1
+                }, {
+                    label: 'Migration Completed',
+                    data: [5, 10, 12, 18, 20, 25, 28, 30, 32, 35, 38, 40],
+                    backgroundColor: '#10b981',
+                    borderColor: '#059669',
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        title: {
+                            display: true,
+                            text: 'Number of Devices'
+                        }
+                    }
+                }
+            }
+        });
+
+        // Budget Impact Chart
+        const budgetCtx = document.getElementById('budgetChart').getContext('2d');
+        const budgetChart = new Chart(budgetCtx, {
+            type: 'line',
+            data: {
+                labels: ['2023', '2024', '2025', '2026', '2027', '2028'],
+                datasets: [{
+                    label: 'Replacement Cost',
+                    data: [2.5, 3.2, 4.1, 3.8, 2.9, 2.2],
+                    borderColor: '#ef4444',
+                    backgroundColor: 'rgba(239, 68, 68, 0.1)',
+                    fill: true,
+                    tension: 0.4
+                }, {
+                    label: 'Risk Mitigation Savings',
+                    data: [0.8, 1.2, 1.8, 2.5, 3.1, 3.5],
+                    borderColor: '#10b981',
+                    backgroundColor: 'rgba(16, 185, 129, 0.1)',
+                    fill: true,
+                    tension: 0.4
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                scales: {
+                    y: {
+                        title: {
+                            display: true,
+                            text: 'Amount (Millions USD)'
+                        }
+                    }
+                }
+            }
+        });
+
+        // EOSL Calendar Chart
+        const eoslCalendarCtx = document.getElementById('eoslCalendarChart').getContext('2d');
+        const eoslCalendarChart = new Chart(eoslCalendarCtx, {
+            type: 'line',
+            data: {
+                labels: ['Q1 2024', 'Q2 2024', 'Q3 2024', 'Q4 2024', 'Q1 2025', 'Q2 2025'],
+                datasets: [{
+                    label: 'EOSL Devices',
+                    data: [15, 28, 42, 35, 22, 18],
+                    borderColor: '#ef4444',
+                    backgroundColor: 'rgba(239, 68, 68, 0.1)',
+                    fill: true,
+                    tension: 0.4
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        title: {
+                            display: true,
+                            text: 'Number of Devices'
+                        }
+                    }
+                }
+            }
+        });
+
+        // Division Filter Functionality
+        document.getElementById('divisionFilter').addEventListener('change', function() {
+            const selectedDivision = this.value;
+            filterDashboardByDivision(selectedDivision);
+        });
+
+        document.getElementById('eoslDivisionFilter').addEventListener('change', function() {
+            const selectedDivision = this.value;
+            filterEOSLByDivision(selectedDivision);
+        });
+
+        function filterDashboardByDivision(division) {
+            // In a real app, this would filter the dashboard data
+            console.log(`Filtering dashboard by division: ${division}`);
+            // Update charts and metrics based on division
+        }
+
+        function filterEOSLByDivision(division) {
+            // In a real app, this would filter EOSL data
+            console.log(`Filtering EOSL by division: ${division}`);
+            // Update EOSL charts and lists based on division
+        }
+
+        // EOSL Timeline Navigation
+        document.getElementById('viewEOSLTimeline').addEventListener('click', function() {
+            // Navigate to EOSL timeline page
+            document.querySelector('.nav-links a[data-page="eosl-timeline"]').click();
+        });
+
+        // Export EOSL Report
+        document.getElementById('exportEOSL').addEventListener('click', function() {
+            alert('Exporting EOSL report...');
+            // In real app, generate and download EOSL report
+        });
+
+        // Your existing JavaScript remains the same, just adding EOSL functionality
+        // ... (all your existing JavaScript code) ...
+
+        // Enhanced page navigation to include EOSL
+        const navLinks = document.querySelectorAll('.nav-links a[data-page]');
+        const pageContents = document.querySelectorAll('.page-content');
+
+        navLinks.forEach(link => {
+            link.addEventListener('click', function(e) {
+                e.preventDefault();
+                const targetPage = this.getAttribute('data-page');
+                
+                // Update active states
+                navLinks.forEach(l => l.classList.remove('active'));
+                this.classList.add('active');
+                
+                // Show target page
+                pageContents.forEach(page => page.classList.remove('active'));
+                document.getElementById(`${targetPage}-page`).classList.add('active');
+                
+                // Update header title
+                const pageTitle = this.textContent.trim();
+                document.querySelector('.header h2').textContent = pageTitle;
+            });
+        });
+
+        // Theme toggle and other existing functionality remains the same
+        // ... (rest of your existing JavaScript) ...
+    </script>
+</body>
+</html>
